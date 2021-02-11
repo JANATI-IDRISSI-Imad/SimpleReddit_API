@@ -35,6 +35,16 @@ public class UserService {
         System.out.println(user);
         userRepository.save(user);
     }
+    public String register(User user){
+       try {
+           register(user.getUsername(),user.getEmail(),user.getPassword());
+           userRepository.save(user);
+           return "true";
+       }
+       catch (Exception exception){
+            return  exception.getMessage();
+       }
+    }
 
 
 }
