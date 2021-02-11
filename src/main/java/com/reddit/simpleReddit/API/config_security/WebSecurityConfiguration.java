@@ -2,6 +2,7 @@ package com.reddit.simpleReddit.API.config_security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -39,6 +40,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
                 .antMatchers("/save").permitAll()
                 .antMatchers("/register").permitAll()
                 .antMatchers("/admin/*").hasAuthority("ADMIN")
+                .antMatchers( HttpMethod.GET,"/Subject/**").permitAll()
+                .antMatchers( HttpMethod.GET,"/Subject/*").permitAll()
+                .antMatchers( HttpMethod.GET,"/Subject/").permitAll()
                 //.antMatchers("/api/*").access("hasAuthority('ADMIN') or hasAuthority('USER')")
                 .anyRequest()
                 .authenticated()

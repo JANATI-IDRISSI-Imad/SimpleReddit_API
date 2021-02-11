@@ -13,7 +13,6 @@ import java.util.Optional;
 public class SubjectService {
     @Autowired
     SubjectRepository subjectRepository;
-
     public Subject getSubjectByID(Long id){
         Optional<Subject> optionalSubject = subjectRepository.findById(id);
         Subject subject = null;
