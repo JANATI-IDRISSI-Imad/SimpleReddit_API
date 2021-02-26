@@ -1,23 +1,22 @@
 package com.reddit.simpleReddit.API.config_security;
 
+import com.reddit.simpleReddit.API.jwt.JwtTokenVerifier;
+import com.reddit.simpleReddit.API.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.concurrent.TimeUnit;
 
 @Configuration
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
-
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -31,33 +30,29 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
                 .passwordEncoder(passwordEncoder);
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .cors().and()
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/save").permitAll()
-                .antMatchers("/register").permitAll()
-                .antMatchers("/admin/*").hasAuthority("ADMIN")
-                .antMatchers( HttpMethod.GET,"/Subject/**").permitAll()
-                .antMatchers( HttpMethod.GET,"/Subject/*").permitAll()
-                .antMatchers( HttpMethod.GET,"/Subject/").permitAll()
-                //.antMatchers("/api/*").access("hasAuthority('ADMIN') or hasAuthority('USER')")
-                .anyRequest()
-                .authenticated()
-                .and().httpBasic();
-                ;
-    }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        web
-                .ignoring()
-                ;
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors();
+        http
+                .csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+                .addFilterAfter(new JwtTokenVerifier(),JwtUsernameAndPasswordAuthenticationFilter.class)
+                .authorizeRequests()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/register").permitAll()
+                .antMatchers("/admin/*").hasAuthority("ADMIN")
+                .antMatchers( HttpMethod.GET,"/Subject/all").permitAll()
+                //.antMatchers("/api/*").access("hasAuthority('ADMIN') or hasAuthority('USER')")
+                .anyRequest()
+                .authenticated();
+
+
     }
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedMethods("*");
-    }
+
+
+
 }

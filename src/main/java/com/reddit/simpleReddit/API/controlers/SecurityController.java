@@ -13,7 +13,10 @@ public class SecurityController {
     UserService userService;
     @PostMapping("/register")
     public String register(@RequestBody User user){
-        System.out.println(user.getUsername());
         return userService.register(user);
     }
+   /* @GetMapping("/login")
+    public void login(@RequestBody UsernameAndPasswordAuthenticationRequest user){
+       System.out.println(user.getUsername());
+    }*/
 }

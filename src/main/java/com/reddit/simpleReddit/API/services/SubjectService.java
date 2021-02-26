@@ -40,18 +40,13 @@ public class SubjectService {
         subjectRepository.save(subject);
     }
     
-    public void voteUp(Long id){
+    public Subject vote(Long id, String vote){
         Subject subject= subjectRepository.findById(id).get();
-        Long v=Long.parseLong(subject.getVote())+1;
-        subject.setVote(v.toString());
+        subject.setVote(vote);
         subjectRepository.save(subject);
+        return  subject;
     }
-    public void voteDown(Long id){
-        Subject subject= subjectRepository.findById(id).get();
-        Long v=Long.parseLong(subject.getVote())-1;
-        subject.setVote(v.toString());
-        subjectRepository.save(subject);
-    }
+
 
     public List<Subject> getSubjectsByKeyworld(String keyword){
         Iterable<Subject>subjects=subjectRepository.findAll();

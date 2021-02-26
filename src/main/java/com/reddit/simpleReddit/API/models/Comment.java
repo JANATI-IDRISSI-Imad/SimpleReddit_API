@@ -18,12 +18,6 @@ public class Comment {
     private long id;
     private long vote;
     private String description;
-    @ManyToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name="user_id", nullable=false)
-    private User user;
-    @ManyToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name="subject_id", nullable=false)
-    private Subject subject;
     @OneToMany(cascade = {CascadeType.ALL})
     List<Comment> comments;
 }
