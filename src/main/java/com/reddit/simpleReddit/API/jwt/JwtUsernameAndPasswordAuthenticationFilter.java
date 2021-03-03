@@ -26,9 +26,12 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         this.authenticationManager = authenticationManager;
     }
 
+
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
+
 
         try {UsernameAndPasswordAuthenticationRequest authenticationRequest = new ObjectMapper()
                     .readValue(request.getInputStream(), UsernameAndPasswordAuthenticationRequest.class);
@@ -39,6 +42,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
             );
 
             Authentication authenticate = authenticationManager.authenticate(authentication);
+            response.addHeader("Access-Control-Expose-Headers", "*");
             return authenticate;
 
         } catch (IOException e) {
@@ -60,7 +64,23 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(2)))
                 .signWith(Keys.hmacShaKeyFor(key.getBytes()))
                 .compact();
+        //System.out.println(token);
+        //response.addHeader("Access-Control-Expose-Headers", "*");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.addHeader("Authorization" ,"Bearer" + token);
+        String s="Bearer" + token;
+        response.getOutputStream().write(JSON("Bearer" + token,authResult.getName()).getBytes());
+        //response.addHeader("tt" ,"kk " + "skjdljsqdks");
 
-        response.addHeader("Authorization" ,"Bearere" + token);
+
+        //System.out.println("Authorization : "+response.getHeader("Authorization"));
+    }
+    private String JSON(String token,String username){
+        String s="{"+
+                    '"'+"Authorization"+'"'+':'+'"'+token+'"'+','+
+                    '"'+"username"+'"'+':'+'"'+username+'"'+
+                "}";
+        return s;
     }
 }

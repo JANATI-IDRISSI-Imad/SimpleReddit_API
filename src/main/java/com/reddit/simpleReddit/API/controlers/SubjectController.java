@@ -22,7 +22,7 @@ public class SubjectController {
     public Subject subject(@PathVariable Long id){
         return subjectService.getSubjectByID(id);
     }
-    @PostMapping({"vote/{id}"})
+    @PutMapping({"vote/{id}"})
     public Subject vote(@PathVariable Long id, @RequestBody String vote){
         System.out.println(vote);
         return subjectService.vote(id,vote);

@@ -42,7 +42,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             return;
         }
 
-        String token = authorizationHeader.replace("Bearere","");
+        String token = authorizationHeader.replace("Bearer","");
 
         try {
             String key="2021-02-26 00:02:48.200  INFO 1064 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'";
